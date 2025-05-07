@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Countdown Timer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 50px;
+      background: #f0f0f0;
+    }
+
+    input[type="datetime-local"] {
+      padding: 10px;
+      font-size: 1rem;
+    }
+
+    #countdown {
+      font-size: 2rem;
+      margin-top: 30px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <h1>Countdown Timer</h1>
+  <p>Select a target date and time:</p>
+  <input type="datetime-local" id="targetDate" />
+  <div id="countdown">Time remaining will appear here.</div>
+
+  <script>
+    const countdownElement = document.getElementById('countdown');
+    const targetDateInput = document.getElementById('targetDate');
+    let countdownInterval;
+
+    targetDateInput.addEventListener('change', () => {
+      clearInterval(countdownInterval); // Clear previous interval
+      const targetDate = new Date(targetDateInput.value);
+
+      countdownInterval = setInterval(() => {
+        const now = new Date();
+        const timeDiff = targetDate - now;
+
+        if (timeDiff <= 0) {
+          clearInterval(countdownInterval);
+          countdownElement.textContent = "Time's up!";
+          return;
+        }
+
+        const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((timeDiff / (1000 * 60 * 60)) % 24);
+        const minutes = Math.floor((timeDiff / (1000 * 60)) % 60);
+        const seconds = Math.floor((timeDiff / 1000) % 60);
+
+        countdownElement.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+      }, 1000);
+    });
+  </script>
+</body>
+</html>
