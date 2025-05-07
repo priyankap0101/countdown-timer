@@ -8,44 +8,78 @@
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      padding: 50px;
+      padding: 50px 20px;
       background: #f0f0f0;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+
+    label {
+      font-size: 1.1rem;
+      display: block;
+      margin-bottom: 10px;
     }
 
     input[type="datetime-local"] {
       padding: 10px;
       font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
     }
 
     #countdown {
       font-size: 2rem;
-      margin-top: 30px;
-      color: #333;
+      margin-top: 40px;
+      color: #222;
+    }
+
+    .error {
+      color: red;
+      font-size: 1rem;
+      margin-top: 10px;
     }
   </style>
 </head>
 <body>
   <h1>Countdown Timer</h1>
-  <p>Select a target date and time:</p>
-  <input type="datetime-local" id="targetDate" />
-  <div id="countdown">Time remaining will appear here.</div>
+
+  <section>
+    <label for="targetDate">Select a target date and time:</label>
+    <input type="datetime-local" id="targetDate" />
+    <div class="error" id="errorMsg"></div>
+  </section>
+
+  <div id="countdown">00d 00h 00m 00s</div>
 
   <script>
     const countdownElement = document.getElementById('countdown');
     const targetDateInput = document.getElementById('targetDate');
+    const errorMsg = document.getElementById('errorMsg');
     let countdownInterval;
 
     targetDateInput.addEventListener('change', () => {
-      clearInterval(countdownInterval); // Clear previous interval
+      clearInterval(countdownInterval);
+      errorMsg.textContent = "";
+
       const targetDate = new Date(targetDateInput.value);
+      const now = new Date();
+
+      if (isNaN(targetDate) || targetDate <= now) {
+        errorMsg.textContent = "Please select a future date and time.";
+        countdownElement.textContent = "00d 00h 00m 00s";
+        return;
+      }
 
       countdownInterval = setInterval(() => {
-        const now = new Date();
-        const timeDiff = targetDate - now;
+        const currentTime = new Date();
+        const timeDiff = targetDate - currentTime;
 
         if (timeDiff <= 0) {
           clearInterval(countdownInterval);
-          countdownElement.textContent = "Time's up!";
+          countdownElement.textContent = "🎉 Time's up!";
           return;
         }
 
