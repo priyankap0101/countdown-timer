@@ -23,19 +23,20 @@
       margin-bottom: 10px;
     }
 
-    input[type="datetime-local"] {
+    input[type="datetime-local"],
+    button {
       padding: 10px;
       font-size: 1rem;
       border: 1px solid #ccc;
       border-radius: 6px;
+      width: 100%;
+      max-width: 300px;
+      box-sizing: border-box;
     }
 
     button {
       margin-top: 15px;
-      padding: 8px 16px;
-      font-size: 1rem;
       border: none;
-      border-radius: 6px;
       background-color: #007BFF;
       color: white;
       cursor: pointer;
@@ -49,7 +50,12 @@
       font-size: 2.2rem;
       margin-top: 40px;
       color: #222;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    .fade {
+      opacity: 0;
+      transform: scale(0.95);
     }
 
     .error {
@@ -76,10 +82,10 @@
     <label for="targetDate">Select a target date and time:</label>
     <input type="datetime-local" id="targetDate" aria-label="Target date and time" />
     <div class="error" id="errorMsg" role="alert"></div>
-    <button id="clearBtn">Clear Countdown</button>
+    <button id="clearBtn" type="button">Clear Countdown</button>
   </section>
 
-  <div id="countdown" aria-live="polite">00d 00h 00m 00s</div>
+  <div id="countdown" aria-live="polite" aria-label="Countdown display">00d 00h 00m 00s</div>
 
   <script>
     const countdownElement = document.getElementById('countdown');
@@ -106,14 +112,16 @@
         return;
       }
 
-      countdownElement.style.opacity = 0.8;
-      countdownElement.textContent = formatTime(timeDiff);
-      countdownElement.style.opacity = 1;
+      countdownElement.classList.add('fade');
+      setTimeout(() => {
+        countdownElement.textContent = formatTime(timeDiff);
+        countdownElement.classList.remove('fade');
+      }, 150);
     }
 
     function startCountdown(targetDate) {
       clearInterval(countdownInterval);
-      updateCountdown(targetDate); // Immediately show countdown
+      updateCountdown(targetDate); // Immediate update
       countdownInterval = setInterval(() => updateCountdown(targetDate), 1000);
     }
 
@@ -142,7 +150,6 @@
       localStorage.removeItem('targetDate');
     });
 
-    // Auto-start if valid saved date exists
     window.addEventListener('load', () => {
       const savedDate = localStorage.getItem('targetDate');
       if (savedDate) {
