@@ -6,15 +6,15 @@
   <title>Countdown Timer</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
       text-align: center;
       padding: 50px 20px;
-      background: #f0f0f0;
     }
 
     h1 {
       font-size: 2.5rem;
-      margin-bottom: 10px;
+      margin-bottom: 20px;
     }
 
     label {
@@ -31,20 +31,25 @@
     }
 
     #countdown {
-      font-size: 2rem;
+      font-size: 2.2rem;
       margin-top: 40px;
       color: #222;
+      transition: opacity 0.3s ease;
     }
 
     .error {
-      color: red;
+      color: #d8000c;
       font-size: 1rem;
       margin-top: 10px;
+    }
+
+    .hidden {
+      display: none;
     }
   </style>
 </head>
 <body>
-  <h1>Countdown Timer</h1>
+  <h1>⏳ Countdown Timer</h1>
 
   <section>
     <label for="targetDate">Select a target date and time:</label>
@@ -60,22 +65,20 @@
     const errorMsg = document.getElementById('errorMsg');
     let countdownInterval;
 
-    targetDateInput.addEventListener('change', () => {
+    function formatTime(ms) {
+      const days = Math.floor(ms / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((ms / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((ms / (1000 * 60)) % 60);
+      const seconds = Math.floor((ms / 1000) % 60);
+      return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    }
+
+    function startCountdown(targetDate) {
       clearInterval(countdownInterval);
-      errorMsg.textContent = "";
-
-      const targetDate = new Date(targetDateInput.value);
-      const now = new Date();
-
-      if (isNaN(targetDate) || targetDate <= now) {
-        errorMsg.textContent = "Please select a future date and time.";
-        countdownElement.textContent = "00d 00h 00m 00s";
-        return;
-      }
 
       countdownInterval = setInterval(() => {
-        const currentTime = new Date();
-        const timeDiff = targetDate - currentTime;
+        const now = new Date();
+        const timeDiff = targetDate - now;
 
         if (timeDiff <= 0) {
           clearInterval(countdownInterval);
@@ -83,13 +86,43 @@
           return;
         }
 
-        const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
-        const hours = Math.floor((timeDiff / (1000 * 60 * 60)) % 24);
-        const minutes = Math.floor((timeDiff / (1000 * 60)) % 60);
-        const seconds = Math.floor((timeDiff / 1000) % 60);
-
-        countdownElement.textContent = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+        countdownElement.style.opacity = 0.8;
+        countdownElement.textContent = formatTime(timeDiff);
+        countdownElement.style.opacity = 1;
       }, 1000);
+    }
+
+    targetDateInput.addEventListener('change', () => {
+      const selectedDate = new Date(targetDateInput.value);
+      const now = new Date();
+
+      errorMsg.textContent = "";
+
+      if (isNaN(selectedDate) || selectedDate <= now) {
+        errorMsg.textContent = "Please select a future date and time.";
+        countdownElement.textContent = "00d 00h 00m 00s";
+        localStorage.removeItem('targetDate');
+        clearInterval(countdownInterval);
+        return;
+      }
+
+      localStorage.setItem('targetDate', selectedDate.toISOString());
+      startCountdown(selectedDate);
+    });
+
+    // Auto-start if valid date was saved
+    window.addEventListener('load', () => {
+      const savedDate = localStorage.getItem('targetDate');
+      if (savedDate) {
+        const parsedDate = new Date(savedDate);
+        const now = new Date();
+        if (parsedDate > now) {
+          targetDateInput.value = parsedDate.toISOString().slice(0, 16);
+          startCountdown(parsedDate);
+        } else {
+          localStorage.removeItem('targetDate');
+        }
+      }
     });
   </script>
 </body>
