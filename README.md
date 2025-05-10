@@ -1,6 +1,6 @@
 # ⏳ Countdown Timer
 
-A simple and elegant countdown timer that allows users to select a future date and time, then displays a live countdown in days, hours, minutes, and seconds. Built with HTML, CSS, and JavaScript.
+A simple and elegant countdown timer that allows users to select a future date and time, then displays a live countdown in days, hours, minutes, and seconds.
 
 ---
 
