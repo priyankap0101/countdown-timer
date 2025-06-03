@@ -4,7 +4,7 @@ A simple and elegant countdown timer that allows users to select a future date a
 
 ---
 
-## ✨ Features
+##Features
 
 - ⏱ Live countdown updated every second
 - 📅 Input for selecting a future date and time
