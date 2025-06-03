@@ -1,10 +1,10 @@
-# ⏳ Countdown Timer
+# Countdown Timer
 
 A simple and elegant countdown timer that allows users to select a future date and time, then displays a live countdown in days, hours, minutes, and seconds.
 
 ---
 
-##Features
+## Features
 
 - ⏱ Live countdown updated every second
 - 📅 Input for selecting a future date and time
