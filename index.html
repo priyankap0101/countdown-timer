@@ -9,7 +9,7 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: #f5f7fa;
       text-align: center;
-      padding: 25px 25px;
+      padding: 40px 20px;
     }
 
     h1 {
@@ -27,19 +27,19 @@
     button {
       padding: 10px;
       font-size: 1rem;
-      border: 1px solid #ccc;
       border-radius: 6px;
+      border: 1px solid #ccc;
       width: 100%;
       max-width: 600px;
       box-sizing: border-box;
+      margin: 5px auto;
     }
 
     button {
-      margin-top: 15px;
-      border: none;
       background-color: #007BFF;
       color: white;
-      cursor: pointer;
+      border: none;
+      transition: background-color 0.3s;
     }
 
     button:hover {
@@ -64,14 +64,15 @@
       margin-top: 10px;
     }
 
-    @media (max-width: 600px) {
-      h1 {
-        font-size: 2rem;
-      }
+    #selectedTime {
+      margin-top: 10px;
+      font-size: 1rem;
+      color: #555;
+    }
 
-      #countdown {
-        font-size: 1.8rem;
-      }
+    @media (max-width: 600px) {
+      h1 { font-size: 2rem; }
+      #countdown { font-size: 1.8rem; }
     }
   </style>
 </head>
@@ -81,6 +82,7 @@
   <section>
     <label for="targetDate">Select a target date and time:</label>
     <input type="datetime-local" id="targetDate" aria-label="Target date and time" />
+    <div id="selectedTime"></div>
     <div class="error" id="errorMsg" role="alert"></div>
     <button id="clearBtn" type="button">Clear Countdown</button>
   </section>
@@ -91,6 +93,7 @@
     const countdownElement = document.getElementById('countdown');
     const targetDateInput = document.getElementById('targetDate');
     const errorMsg = document.getElementById('errorMsg');
+    const selectedTime = document.getElementById('selectedTime');
     const clearBtn = document.getElementById('clearBtn');
     let countdownInterval;
 
@@ -109,6 +112,7 @@
       if (timeDiff <= 0) {
         clearInterval(countdownInterval);
         countdownElement.textContent = "🎉 Time's up!";
+        countdownElement.style.color = "#28a745";
         return;
       }
 
@@ -121,7 +125,7 @@
 
     function startCountdown(targetDate) {
       clearInterval(countdownInterval);
-      updateCountdown(targetDate); // Immediate update
+      updateCountdown(targetDate);
       countdownInterval = setInterval(() => updateCountdown(targetDate), 1000);
     }
 
@@ -129,16 +133,19 @@
       const selectedDate = new Date(targetDateInput.value);
       const now = new Date();
       errorMsg.textContent = "";
+      selectedTime.textContent = "";
 
       if (isNaN(selectedDate) || selectedDate <= now) {
-        errorMsg.textContent = "Please select a future date and time.";
+        errorMsg.textContent = "⚠️ Please select a valid future date and time.";
         countdownElement.textContent = "00d 00h 00m 00s";
-        localStorage.removeItem('targetDate');
         clearInterval(countdownInterval);
+        localStorage.removeItem('targetDate');
         return;
       }
 
       localStorage.setItem('targetDate', selectedDate.toISOString());
+      selectedTime.textContent = `🕒 Countdown to: ${selectedDate.toLocaleString()}`;
+      countdownElement.style.color = "#222";
       startCountdown(selectedDate);
     });
 
@@ -147,6 +154,8 @@
       countdownElement.textContent = "00d 00h 00m 00s";
       targetDateInput.value = "";
       errorMsg.textContent = "";
+      selectedTime.textContent = "";
+      countdownElement.style.color = "#222";
       localStorage.removeItem('targetDate');
     });
 
@@ -156,6 +165,7 @@
         const parsedDate = new Date(savedDate);
         if (parsedDate > new Date()) {
           targetDateInput.value = parsedDate.toISOString().slice(0, 16);
+          selectedTime.textContent = `🕒 Countdown to: ${parsedDate.toLocaleString()}`;
           startCountdown(parsedDate);
         } else {
           localStorage.removeItem('targetDate');
