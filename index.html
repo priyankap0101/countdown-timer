@@ -33,12 +33,14 @@
       max-width: 600px;
       box-sizing: border-box;
       margin: 5px auto;
+      display: block;
     }
 
     button {
       background-color: #007BFF;
       color: white;
       border: none;
+      cursor: pointer;
       transition: background-color 0.3s;
     }
 
@@ -82,7 +84,7 @@
   <section>
     <label for="targetDate">Select a target date and time:</label>
     <input type="datetime-local" id="targetDate" aria-label="Target date and time" />
-    <div id="selectedTime"></div>
+    <div id="selectedTime" aria-live="polite"></div>
     <div class="error" id="errorMsg" role="alert"></div>
     <button id="clearBtn" type="button">Clear Countdown</button>
   </section>
@@ -95,6 +97,7 @@
     const errorMsg = document.getElementById('errorMsg');
     const selectedTime = document.getElementById('selectedTime');
     const clearBtn = document.getElementById('clearBtn');
+
     let countdownInterval;
 
     function formatTime(ms) {
@@ -113,6 +116,7 @@
         clearInterval(countdownInterval);
         countdownElement.textContent = "🎉 Time's up!";
         countdownElement.style.color = "#28a745";
+        alert("🎉 Countdown completed!");
         return;
       }
 
@@ -138,6 +142,7 @@
       if (isNaN(selectedDate) || selectedDate <= now) {
         errorMsg.textContent = "⚠️ Please select a valid future date and time.";
         countdownElement.textContent = "00d 00h 00m 00s";
+        countdownElement.style.color = "#222";
         clearInterval(countdownInterval);
         localStorage.removeItem('targetDate');
         return;
